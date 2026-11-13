@@ -31,8 +31,7 @@ PWA برای نصب به **HTTPS** نیاز دارد. ساده‌ترین راه
 
 1. چهار فایل بالا را در ریشه ریپو قرار بده.
 2. از **Settings ← Pages** برنچ `main` و پوشه `/ (root)` را انتخاب کن.
-3. بعد از یکی دو دقیقه، برنامه روی `https://USERNAME.github.io/budget-installments
-/` در دسترس است.
+3. بعد از یکی دو دقیقه، برنامه روی `https://USERNAME.github.io/budget-installments/` در دسترس است.
 
 (جایگزین: پوشه پروژه را در `app.netlify.com/drop` بکش و رها کن.)
 
@@ -60,7 +59,7 @@ python3 -m http.server 8000
 
 ## به‌روزرسانی
 
-بعد از تغییر در فایل‌ها، مقدار نسخه کش در `sw.js` را بالا ببر (مثلا `aghsat-v3` به `aghsat-v4`)، فایل‌ها را روی ریپو commit کن و برنامه را یک بار ببند و دوباره باز کن.
+بعد از تغییر در فایل‌ها، مقدار نسخه کش در `sw.js` را بالا ببر (مثلا `installments-v3` به `installments-v4`)، فایل‌ها را روی ریپو commit کن و برنامه را یک بار ببند و دوباره باز کن.
 
 ## ساخت APK (اختیاری)
 
@@ -69,7 +68,7 @@ python3 -m http.server 8000
 ```bash
 npm init -y
 npm i @capacitor/core @capacitor/cli @capacitor/android
-npx cap init aghsat com.example.aghsat --web-dir=.
+npx cap init installments com.example.installments --web-dir=.
 npx cap add android
 npx cap open android
 ```
