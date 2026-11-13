@@ -1,6 +1,4 @@
-# aghsat-pwa
-
-[English](README.md) | **فارسی**
+# budget-installments
 
 اپ مدیریت اقساط، به‌صورت PWA با پشتیبانی کامل فارسی (RTL). بدون سرور، بدون build و با ذخیره داده‌ها فقط روی گوشی خودت.
 
@@ -39,8 +37,8 @@ PWA برای نصب به **HTTPS** نیاز دارد. ساده‌ترین راه
 
 سپس روی گوشی:
 
-- **اندروید (Chrome):** منوی ⋮ ← *Install app* یا *Add to Home screen*
-- **آیفون (Safari):** دکمه Share ← *Add to Home Screen*
+- **اندروید (Chrome):** منوی ⋮ ← _Install app_ یا _Add to Home screen_
+- **آیفون (Safari):** دکمه Share ← _Add to Home Screen_
 
 ## اجرا روی کامپیوتر (برای توسعه)
 
