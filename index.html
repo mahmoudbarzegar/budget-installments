@@ -1,630 +1,197 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#0f3d3e" />
-    <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="icon.svg" />
-    <title>مدیریت اقساط</title>
-    <style>
-      :root {
-        --bg: #f6f3ec;
-        --card: #fffdf8;
-        --ink: #17211f;
-        --mute: #6b7773;
-        --main: #0f3d3e;
-        --gold: #f2c14e;
-        --bad: #c2410c;
-        --ok: #2f7d4f;
-        --line: #e4ddcf;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #101615;
-          --card: #18211f;
-          --ink: #ece8dc;
-          --mute: #97a39f;
-          --main: #2a7f7c;
-          --line: #2a3532;
-          --bad: #f08a5d;
-          --ok: #6fcf97;
-        }
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-      }
-      body {
-        font-family: Vazirmatn, Tahoma, system-ui, sans-serif;
-        background: var(--bg);
-        color: var(--ink);
-        padding: env(safe-area-inset-top) 14px
-          calc(90px + env(safe-area-inset-bottom));
-        line-height: 1.6;
-      }
-      header {
-        padding: 18px 2px 10px;
-      }
-      header h1 {
-        font-size: 15px;
-        color: var(--mute);
-        font-weight: 500;
-      }
-      .total {
-        font-size: 34px;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-      }
-      .total small {
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--mute);
-      }
-      .sum {
-        display: flex;
-        gap: 10px;
-        margin-top: 8px;
-        font-size: 13px;
-        color: var(--mute);
-      }
-      .src {
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        margin: 14px 0;
-        overflow: hidden;
-      }
-      .sh {
-        padding: 14px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-      }
-      .sh h2 {
-        font-size: 17px;
-      }
-      .sh .b {
-        font-size: 12px;
-        color: var(--mute);
-      }
-      .bar {
-        height: 6px;
-        background: var(--line);
-      }
-      .bar i {
-        display: block;
-        height: 100%;
-        background: var(--main);
-        transition: width 0.3s;
-      }
-      .bar.over i {
-        background: var(--bad);
-      }
-      .stats {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 16px;
-        font-size: 13px;
-      }
-      .stats b {
-        display: block;
-        font-size: 15px;
-      }
-      .left.neg {
-        color: var(--bad);
-      }
-      .it {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 11px 16px;
-        border-top: 1px solid var(--line);
-      }
-      .it input[type="checkbox"] {
-        width: 22px;
-        height: 22px;
-        accent-color: var(--ok);
-        flex: none;
-      }
-      .it .t {
-        flex: 1;
-        min-width: 0;
-      }
-      .it .t div {
-        font-size: 15px;
-      }
-      .it .t small {
-        color: var(--mute);
-        font-size: 12px;
-        display: block;
-        white-space: pre-wrap;
-      }
-      .it.paid .t div,
-      .it.paid .a {
-        text-decoration: line-through;
-        color: var(--mute);
-      }
-      .a {
-        font-weight: 700;
-        font-size: 15px;
-        white-space: nowrap;
-      }
-      button {
-        font: inherit;
-        border: 0;
-        cursor: pointer;
-        color: inherit;
-        background: none;
-      }
-      .ico {
-        padding: 6px 9px;
-        color: var(--mute);
-        font-size: 18px;
-      }
-      .add {
-        display: block;
-        width: 100%;
-        padding: 12px;
-        color: var(--main);
-        font-weight: 700;
-        border-top: 1px dashed var(--line);
-      }
-      @media (prefers-color-scheme: dark) {
-        .add {
-          color: var(--gold);
-        }
-      }
-      .fab {
-        position: fixed;
-        inset-inline-start: 16px;
-        bottom: calc(18px + env(safe-area-inset-bottom));
-        background: var(--gold);
-        color: #241c00;
-        font-weight: 800;
-        padding: 14px 20px;
-        border-radius: 30px;
-        box-shadow: 0 6px 20px #0004;
-      }
-      .tools {
-        text-align: center;
-        margin-top: 24px;
-        font-size: 13px;
-        color: var(--mute);
-      }
-      .tools button {
-        text-decoration: underline;
-        margin: 0 8px;
-      }
-      dialog {
-        border: 0;
-        border-radius: 20px;
-        background: var(--card);
-        color: var(--ink);
-        width: min(92vw, 420px);
-        padding: 20px;
-        margin: auto;
-      }
-      dialog::backdrop {
-        background: #0008;
-      }
-      dialog h3 {
-        margin-bottom: 12px;
-      }
-      label {
-        display: block;
-        font-size: 13px;
-        color: var(--mute);
-        margin-top: 10px;
-      }
-      input[type="text"],
-      input[type="number"],
-      textarea {
-        width: 100%;
-        font: inherit;
-        padding: 11px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: var(--bg);
-        color: var(--ink);
-        margin-top: 4px;
-      }
-      .row {
-        display: flex;
-        gap: 10px;
-        margin-top: 16px;
-      }
-      .row button {
-        flex: 1;
-        padding: 12px;
-        border-radius: 12px;
-        font-weight: 700;
-        background: var(--line);
-      }
-      .row .go {
-        background: var(--main);
-        color: #fff;
-      }
-      .row .del {
-        background: none;
-        color: var(--bad);
-        flex: 0 0 auto;
-      }
-      .empty {
-        text-align: center;
-        color: var(--mute);
-        padding: 60px 20px;
-      }
-      .sc {
-        display: block;
-        width: 100%;
-        text-align: start;
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        margin: 12px 0;
-        overflow: hidden;
-      }
-      .sc .sh {
-        padding-bottom: 10px;
-      }
-      .sc .stats {
-        padding-top: 12px;
-      }
-      .chev {
-        color: var(--mute);
-        font-size: 20px;
-      }
-      .nav {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 14px 0 4px;
-      }
-      .nav h1 {
-        flex: 1;
-        font-size: 20px;
-        color: var(--ink);
-        font-weight: 800;
-      }
-      .back {
-        font-size: 22px;
-        padding: 6px 10px;
-        color: var(--main);
-      }
-      @media (prefers-color-scheme: dark) {
-        .back {
-          color: var(--gold);
-        }
-      }
-      .det {
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        margin: 10px 0;
-        overflow: hidden;
-      }
-      .tb {
-        display: flex;
-        gap: 8px;
-        margin: 12px 0 4px;
-      }
-      .tb input,
-      .tb select {
-        font: inherit;
-        padding: 10px 12px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: var(--card);
-        color: var(--ink);
-      }
-      .tb input {
-        flex: 1;
-        min-width: 0;
-      }
-      .dt {
-        color: var(--mute);
-      }
-      .dt.od {
-        color: var(--bad);
-        font-weight: 700;
-      }
-      input[type="date"] {
-        width: 100%;
-        font: inherit;
-        padding: 11px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: var(--bg);
-        color: var(--ink);
-        margin-top: 4px;
-      }
-    </style>
-  </head>
-  <body>
-    <header id="hd"></header>
-    <main id="list"></main>
-    <div class="tools" id="tools">
-      <button onclick="exp()">پشتیبان‌گیری</button
-      ><button onclick="imp.click()">بازیابی</button
-      ><input id="imp" type="file" accept=".json" hidden />
-    </div>
-    <button class="fab" id="fab"></button>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f3d3e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<title>مدیریت اقساط</title>
+<style>
+:root{--bg:#f6f3ec;--card:#fffdf8;--ink:#17211f;--mute:#6b7773;--main:#0f3d3e;--gold:#f2c14e;--bad:#c2410c;--ok:#2f7d4f;--line:#e4ddcf}
+@media(prefers-color-scheme:dark){:root{--bg:#101615;--card:#18211f;--ink:#ece8dc;--mute:#97a39f;--main:#2a7f7c;--line:#2a3532;--bad:#f08a5d;--ok:#6fcf97}}
+*{box-sizing:border-box;margin:0}
+body{font-family:Vazirmatn,Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:env(safe-area-inset-top) 14px calc(90px + env(safe-area-inset-bottom));line-height:1.6}
+header{padding:18px 2px 10px}
+header h1{font-size:15px;color:var(--mute);font-weight:500}
+.total{font-size:34px;font-weight:800;letter-spacing:-.5px}
+.total small{font-size:14px;font-weight:500;color:var(--mute)}
+.sum{display:flex;gap:10px;margin-top:8px;font-size:13px;color:var(--mute)}
+.src{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:14px 0;overflow:hidden}
+.sh{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sh h2{font-size:17px}
+.sh .b{font-size:12px;color:var(--mute)}
+.bar{height:6px;background:var(--line)}
+.bar i{display:block;height:100%;background:var(--main);transition:width .3s}
+.bar.over i{background:var(--bad)}
+.stats{display:flex;justify-content:space-between;padding:10px 16px;font-size:13px}
+.stats b{display:block;font-size:15px}
+.left.neg{color:var(--bad)}
+.it{display:flex;align-items:center;gap:10px;padding:11px 16px;border-top:1px solid var(--line)}
+.it input[type=checkbox]{width:22px;height:22px;accent-color:var(--ok);flex:none}
+.it .t{flex:1;min-width:0}
+.it .t div{font-size:15px}
+.it .t small{color:var(--mute);font-size:12px;display:block;white-space:pre-wrap}
+.it.paid .t div,.it.paid .a{text-decoration:line-through;color:var(--mute)}
+.a{font-weight:700;font-size:15px;white-space:nowrap}
+button{font:inherit;border:0;cursor:pointer;color:inherit;background:none}
+.ico{padding:6px 9px;color:var(--mute);font-size:18px}
+.add{display:block;width:100%;padding:12px;color:var(--main);font-weight:700;border-top:1px dashed var(--line)}
+@media(prefers-color-scheme:dark){.add{color:var(--gold)}}
+.fab{position:fixed;inset-inline-start:16px;bottom:calc(18px + env(safe-area-inset-bottom));background:var(--gold);color:#241c00;font-weight:800;padding:14px 20px;border-radius:30px;box-shadow:0 6px 20px #0004}
+.tools{text-align:center;margin-top:24px;font-size:13px;color:var(--mute)}
+.tools button{text-decoration:underline;margin:0 8px}
+dialog{border:0;border-radius:20px;background:var(--card);color:var(--ink);width:min(92vw,420px);padding:20px;margin:auto}
+dialog::backdrop{background:#0008}
+dialog h3{margin-bottom:12px}
+label{display:block;font-size:13px;color:var(--mute);margin-top:10px}
+input[type=text],input[type=number],textarea{width:100%;font:inherit;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);margin-top:4px}
+.row{display:flex;gap:10px;margin-top:16px}
+.row button{flex:1;padding:12px;border-radius:12px;font-weight:700;background:var(--line)}
+.row .go{background:var(--main);color:#fff}
+.row .del{background:none;color:var(--bad);flex:0 0 auto}
+.empty{text-align:center;color:var(--mute);padding:60px 20px}
+.sc{display:block;width:100%;text-align:start;background:var(--card);border:1px solid var(--line);border-radius:18px;margin:12px 0;overflow:hidden}
+.sc .sh{padding-bottom:10px}
+.sc .stats{padding-top:12px}
+.chev{color:var(--mute);font-size:20px}
+.nav{display:flex;align-items:center;gap:6px;padding:14px 0 4px}
+.nav h1{flex:1;font-size:20px;color:var(--ink);font-weight:800}
+.back{font-size:22px;padding:6px 10px;color:var(--main)}
+@media(prefers-color-scheme:dark){.back{color:var(--gold)}}
+.det{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:10px 0;overflow:hidden}
+.tb{display:flex;gap:8px;margin:12px 0 4px}
+.tb input,.tb select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
+.tb input{flex:1;min-width:0}
+.dt{color:var(--mute)}
+.dt.od{color:var(--bad);font-weight:700}
+input[type=date]{width:100%;font:inherit;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);margin-top:4px}
+</style>
+</head>
+<body>
+<header id="hd"></header>
+<main id="list"></main>
+<div class="tools" id="tools"><button onclick="exp()">پشتیبان‌گیری</button><button onclick="imp.click()">بازیابی</button><input id="imp" type="file" accept=".json" hidden><div id="lb" style="margin-top:8px"></div></div>
+<button class="fab" id="fab"></button>
 
-    <dialog id="dS">
-      <h3 id="dST"></h3>
-      <label
-        >نام منبع<input type="text" id="sN" placeholder="مثلا مخارج"
-      /></label>
-      <label
-        >بودجه (تومان)<input type="number" id="sB" inputmode="numeric"
-      /></label>
-      <div class="row">
-        <button class="del" id="sD">حذف</button
-        ><button onclick="dS.close()">انصراف</button
-        ><button class="go" id="sOK">ذخیره</button>
-      </div>
-    </dialog>
+<dialog id="dS"><h3 id="dST"></h3>
+<label>نام منبع<input type="text" id="sN" placeholder="مثلا مخارج"></label>
+<label>بودجه (تومان)<input type="number" id="sB" inputmode="numeric"></label>
+<div class="row"><button class="del" id="sD">حذف</button><button onclick="dS.close()">انصراف</button><button class="go" id="sOK">ذخیره</button></div></dialog>
 
-    <dialog id="dI">
-      <h3 id="dIT"></h3>
-      <label
-        >عنوان<input type="text" id="iN" placeholder="مثلا اسنپ‌پی - گوشی"
-      /></label>
-      <label
-        >مبلغ قسط (تومان)<input type="number" id="iA" inputmode="numeric"
-      /></label>
-      <label>تاریخ سررسید (اختیاری)<input type="date" id="iDt" /></label>
-      <label>توضیحات<textarea id="iD" rows="2"></textarea></label>
-      <div class="row">
-        <button class="del" id="iDel">حذف</button
-        ><button onclick="dI.close()">انصراف</button
-        ><button class="go" id="iOK">ذخیره</button>
-      </div>
-    </dialog>
+<dialog id="dI"><h3 id="dIT"></h3>
+<label>عنوان<input type="text" id="iN" placeholder="مثلا اسنپ‌پی - گوشی"></label>
+<label>مبلغ قسط (تومان)<input type="number" id="iA" inputmode="numeric"></label>
+<label>تاریخ سررسید (اختیاری)<input type="date" id="iDt"></label>
+<label>توضیحات<textarea id="iD" rows="2"></textarea></label>
+<div class="row"><button class="del" id="iDel">حذف</button><button onclick="dI.close()">انصراف</button><button class="go" id="iOK">ذخیره</button></div></dialog>
 
-    <script>
-      const $ = (id) => document.getElementById(id),
-        K = "installments-data";
-      let S = [];
-      try {
-        S = JSON.parse(localStorage.getItem(K)) || [];
-      } catch (e) {}
-      const save = () => {
-        try {
-          localStorage.setItem(K, JSON.stringify(S));
-        } catch (e) {}
-        render();
-      };
-      const f = (n) => Number(n || 0).toLocaleString("fa-IR");
-      const uid = () =>
-        Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-      const esc = (s) =>
-        String(s ?? "").replace(
-          /[&<>"]/g,
-          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
-        );
-      const due = (s) =>
-        s.items.filter((i) => !i.paid).reduce((a, i) => a + i.amount, 0);
+<script>
+const $=id=>document.getElementById(id),K='installments-data';
+try{[['aghsat-data','installments-data'],['aghsat-lastbackup','installments-lastbackup']].forEach(([o,n])=>{const v=localStorage.getItem(o);if(v!==null&&localStorage.getItem(n)===null)localStorage.setItem(n,v)})}catch(e){}
+let S=[];
+try{S=JSON.parse(localStorage.getItem(K))||[]}catch(e){}
+const NP=()=>{const c=window.Capacitor;return c&&c.isNativePlatform&&c.isNativePlatform()?c.Plugins:null};
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}const p=NP();if(p&&p.Preferences)p.Preferences.set({key:K,value:JSON.stringify(S)}).catch(()=>{});render()};
+const f=n=>Number(n||0).toLocaleString('fa-IR');
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const due=s=>s.items.filter(i=>!i.paid).reduce((a,i)=>a+i.amount,0);
 
-      function render() {
-        const id = decodeURIComponent(location.hash.slice(1)),
-          s = S.find((x) => x.id == id);
-        if (s) return detail(s);
-        home();
-      }
-      function home() {
-        const T = S.reduce((a, s) => a + due(s), 0),
-          B = S.reduce((a, s) => a + s.budget, 0);
-        $("hd").innerHTML =
-          `<div class="nav"><h1 style="font-size:15px;color:var(--mute);font-weight:500">مجموع اقساط باقی‌مانده</h1></div><div class="total">${f(T)} <small>تومان</small></div>` +
-          (S.length
-            ? `<div class="sum"><span>کل بودجه: ${f(B)}</span><span>باقی: ${f(B - T)}</span></div>`
-            : "");
-        $("list").innerHTML = S.length
-          ? S.map((s) => {
-              const d = due(s),
-                left = s.budget - d,
-                p = s.budget
-                  ? Math.min(100, (d / s.budget) * 100)
-                  : d
-                    ? 100
-                    : 0,
-                n = s.items.filter((i) => !i.paid).length;
-              return `<button class="sc" onclick="location.hash='${s.id}'"><div class="sh"><div><h2>${esc(s.name)}</h2><div class="b">${f(n)} قسط فعال · بودجه ${f(s.budget)}</div></div><span class="chev">‹</span></div>
-    <div class="bar ${left < 0 ? "over" : ""}"><i style="width:${p}%"></i></div>
-    <div class="stats"><div>اقساط<b>${f(d)}</b></div><div class="left ${left < 0 ? "neg" : ""}">مانده بودجه<b>${f(left)}</b></div></div></button>`;
-            }).join("")
-          : '<div class="empty">هنوز منبعی نداری.<br>با «منبع جدید» شروع کن، مثلا «مخارج» یا «کیف پول».</div>';
-        $("tools").style.display = "";
-        $("fab").textContent = "+ منبع جدید";
-        $("fab").onclick = () => editSrc();
-      }
-      let q = "",
-        sort = "def";
-      const fd = (d) =>
-        new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        }).format(new Date(d + "T00:00"));
-      const today = () => {
-        const t = new Date();
-        return (
-          t.getFullYear() +
-          "-" +
-          String(t.getMonth() + 1).padStart(2, "0") +
-          "-" +
-          String(t.getDate()).padStart(2, "0")
-        );
-      };
-      function detail(s) {
-        const d = due(s),
-          left = s.budget - d,
-          p = s.budget ? Math.min(100, (d / s.budget) * 100) : d ? 100 : 0;
-        $("hd").innerHTML =
-          `<div class="nav"><button class="back" onclick="location.hash=''" aria-label="بازگشت">→</button><h1>${esc(s.name)}</h1><button class="ico" onclick="editSrc('${s.id}')" aria-label="ویرایش منبع">✎</button></div>
-  <div class="det"><div class="stats"><div>بودجه<b>${f(s.budget)}</b></div><div>اقساط<b>${f(d)}</b></div><div class="left ${left < 0 ? "neg" : ""}">مانده<b>${f(left)}</b></div></div><div class="bar ${left < 0 ? "over" : ""}"><i style="width:${p}%"></i></div></div>
-  ${s.items.length ? `<div class="tb"><input type="search" id="q" placeholder="جستجو در اقساط" value="${esc(q)}"><select id="so"><option value="def">ترتیب ثبت</option><option value="date">نزدیک‌ترین سررسید</option><option value="amount">بیشترین مبلغ</option></select></div>` : ""}`;
-        if (s.items.length) {
-          $("so").value = sort;
-          $("q").oninput = (e) => {
-            q = e.target.value;
-            items(s);
-          };
-          $("so").onchange = (e) => {
-            sort = e.target.value;
-            items(s);
-          };
-        }
-        items(s);
-        $("tools").style.display = "none";
-        $("fab").textContent = "+ قسط جدید";
-        $("fab").onclick = () => editItem(s.id);
-      }
-      function items(s) {
-        let a = s.items.filter((i) =>
-          (i.title + " " + (i.note || ""))
-            .toLowerCase()
-            .includes(q.trim().toLowerCase()),
-        );
-        if (sort == "date")
-          a = [...a].sort((x, y) =>
-            (x.date || "9").localeCompare(y.date || "9"),
-          );
-        if (sort == "amount") a = [...a].sort((x, y) => y.amount - x.amount);
-        const t = today();
-        $("list").innerHTML = !s.items.length
-          ? '<div class="empty">قسطی ثبت نشده.<br>با «قسط جدید» اولین قسط رو اضافه کن.</div>'
-          : !a.length
-            ? '<div class="empty">قسطی با این جستجو پیدا نشد.</div>'
-            : `<div class="det">` +
-              a
-                .map(
-                  (i, k) =>
-                    `<div class="it ${i.paid ? "paid" : ""}" style="${k ? "" : "border-top:0"}"><input type="checkbox" ${i.paid ? "checked" : ""} onchange="pay('${s.id}','${i.id}')"><div class="t"><div>${esc(i.title)}</div>${i.date ? `<small class="dt ${!i.paid && i.date < t ? "od" : ""}">سررسید: ${fd(i.date)}${!i.paid && i.date < t ? " (گذشته)" : ""}</small>` : ""}${i.note ? `<small>${esc(i.note)}</small>` : ""}</div><span class="a">${f(i.amount)}</span><button class="ico" onclick="editItem('${s.id}','${i.id}')">✎</button></div>`,
-                )
-                .join("") +
-              `</div>`;
-      }
-      window.addEventListener("hashchange", () => {
-        q = "";
-        render();
-        scrollTo(0, 0);
-      });
-      const pay = (s, i) => {
-        const it = S.find((x) => x.id == s).items.find((x) => x.id == i);
-        it.paid = !it.paid;
-        save();
-      };
+function render(){
+  const id=decodeURIComponent(location.hash.slice(1)),s=S.find(x=>x.id==id);
+  if(s)return detail(s);
+  home();
+}
+function home(){
+  const T=S.reduce((a,s)=>a+due(s),0),B=S.reduce((a,s)=>a+s.budget,0);
+  $('hd').innerHTML=`<div class="nav"><h1 style="font-size:15px;color:var(--mute);font-weight:500">مجموع اقساط باقی‌مانده</h1></div><div class="total">${f(T)} <small>تومان</small></div>`+(S.length?`<div class="sum"><span>کل بودجه: ${f(B)}</span><span>باقی: ${f(B-T)}</span></div>`:'');
+  $('list').innerHTML=S.length?S.map(s=>{
+    const d=due(s),left=s.budget-d,p=s.budget?Math.min(100,d/s.budget*100):(d?100:0),n=s.items.filter(i=>!i.paid).length;
+    return `<button class="sc" onclick="location.hash='${s.id}'"><div class="sh"><div><h2>${esc(s.name)}</h2><div class="b">${f(n)} قسط فعال · بودجه ${f(s.budget)}</div></div><span class="chev">‹</span></div>
+    <div class="bar ${left<0?'over':''}"><i style="width:${p}%"></i></div>
+    <div class="stats"><div>اقساط<b>${f(d)}</b></div><div class="left ${left<0?'neg':''}">مانده بودجه<b>${f(left)}</b></div></div></button>`}).join('')
+  :'<div class="empty">هنوز منبعی نداری.<br>با «منبع جدید» شروع کن، مثلا «مخارج» یا «کیف پول».</div>';
+  $('tools').style.display='';lb();
+  $('fab').textContent='+ منبع جدید';$('fab').onclick=()=>editSrc();
+}
+let q='',sort='def';
+const fd=d=>new Intl.DateTimeFormat('fa-IR-u-ca-persian',{day:'numeric',month:'long',year:'numeric'}).format(new Date(d+'T00:00'));
+const today=()=>{const t=new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};
+function detail(s){
+  const d=due(s),left=s.budget-d,p=s.budget?Math.min(100,d/s.budget*100):(d?100:0);
+  $('hd').innerHTML=`<div class="nav"><button class="back" onclick="location.hash=''" aria-label="بازگشت">→</button><h1>${esc(s.name)}</h1><button class="ico" onclick="editSrc('${s.id}')" aria-label="ویرایش منبع">✎</button></div>
+  <div class="det"><div class="stats"><div>بودجه<b>${f(s.budget)}</b></div><div>اقساط<b>${f(d)}</b></div><div class="left ${left<0?'neg':''}">مانده<b>${f(left)}</b></div></div><div class="bar ${left<0?'over':''}"><i style="width:${p}%"></i></div></div>
+  ${s.items.length?`<div class="tb"><input type="search" id="q" placeholder="جستجو در اقساط" value="${esc(q)}"><select id="so"><option value="def">ترتیب ثبت</option><option value="date">نزدیک‌ترین سررسید</option><option value="amount">بیشترین مبلغ</option></select></div>`:''}`;
+  if(s.items.length){
+    $('so').value=sort;
+    $('q').oninput=e=>{q=e.target.value;items(s)};
+    $('so').onchange=e=>{sort=e.target.value;items(s)};
+  }
+  items(s);
+  $('tools').style.display='none';
+  $('fab').textContent='+ قسط جدید';$('fab').onclick=()=>editItem(s.id);
+}
+function items(s){
+  let a=s.items.filter(i=>(i.title+' '+(i.note||'')).toLowerCase().includes(q.trim().toLowerCase()));
+  if(sort=='date')a=[...a].sort((x,y)=>(x.date||'9').localeCompare(y.date||'9'));
+  if(sort=='amount')a=[...a].sort((x,y)=>y.amount-x.amount);
+  const t=today();
+  $('list').innerHTML=!s.items.length?'<div class="empty">قسطی ثبت نشده.<br>با «قسط جدید» اولین قسط رو اضافه کن.</div>'
+  :!a.length?'<div class="empty">قسطی با این جستجو پیدا نشد.</div>'
+  :`<div class="det">`+a.map((i,k)=>`<div class="it ${i.paid?'paid':''}" style="${k?'':'border-top:0'}"><input type="checkbox" ${i.paid?'checked':''} onchange="pay('${s.id}','${i.id}')"><div class="t"><div>${esc(i.title)}</div>${i.date?`<small class="dt ${!i.paid&&i.date<t?'od':''}">سررسید: ${fd(i.date)}${!i.paid&&i.date<t?' (گذشته)':''}</small>`:''}${i.note?`<small>${esc(i.note)}</small>`:''}</div><span class="a">${f(i.amount)}</span><button class="ico" onclick="editItem('${s.id}','${i.id}')">✎</button></div>`).join('')+`</div>`;
+}
+window.addEventListener('hashchange',()=>{q='';render();scrollTo(0,0)});
+const pay=(s,i)=>{const it=S.find(x=>x.id==s).items.find(x=>x.id==i);it.paid=!it.paid;save()};
 
-      let es = null;
-      function editSrc(id) {
-        es = id ? S.find((x) => x.id == id) : null;
-        $("dST").textContent = es ? "ویرایش منبع" : "منبع جدید";
-        $("sN").value = es ? es.name : "";
-        $("sB").value = es ? es.budget : "";
-        $("sD").style.display = es ? "" : "none";
-        dS.showModal();
-      }
-      $("sOK").onclick = () => {
-        const n = $("sN").value.trim();
-        if (!n) return;
-        const b = +$("sB").value || 0;
-        if (es) {
-          es.name = n;
-          es.budget = b;
-        } else S.push({ id: uid(), name: n, budget: b, items: [] });
-        dS.close();
-        save();
-      };
-      $("sD").onclick = () => {
-        if (confirm("این منبع و همه اقساطش حذف شود؟")) {
-          S = S.filter((x) => x !== es);
-          dS.close();
-          location.hash = "";
-          save();
-        }
-      };
+let es=null;
+function editSrc(id){
+  es=id?S.find(x=>x.id==id):null;
+  $('dST').textContent=es?'ویرایش منبع':'منبع جدید';
+  $('sN').value=es?es.name:'';$('sB').value=es?es.budget:'';
+  $('sD').style.display=es?'':'none';dS.showModal();
+}
+$('sOK').onclick=()=>{
+  const n=$('sN').value.trim();if(!n)return;
+  const b=+$('sB').value||0;
+  if(es){es.name=n;es.budget=b}else S.push({id:uid(),name:n,budget:b,items:[]});
+  dS.close();save();
+};
+$('sD').onclick=()=>{if(confirm('این منبع و همه اقساطش حذف شود؟')){S=S.filter(x=>x!==es);dS.close();location.hash='';save()}};
 
-      let cs = null,
-        ei = null;
-      function editItem(sid, iid) {
-        cs = S.find((x) => x.id == sid);
-        ei = iid ? cs.items.find((x) => x.id == iid) : null;
-        $("dIT").textContent =
-          (ei ? "ویرایش قسط" : "قسط جدید") + " — " + cs.name;
-        $("iN").value = ei ? ei.title : "";
-        $("iA").value = ei ? ei.amount : "";
-        $("iD").value = ei ? ei.note : "";
-        $("iDt").value = ei ? ei.date || "" : "";
-        $("iDel").style.display = ei ? "" : "none";
-        dI.showModal();
-      }
-      $("iOK").onclick = () => {
-        const t = $("iN").value.trim();
-        if (!t) return;
-        const a = +$("iA").value || 0,
-          n = $("iD").value.trim(),
-          dt = $("iDt").value;
-        if (ei) {
-          ei.title = t;
-          ei.amount = a;
-          ei.note = n;
-          ei.date = dt;
-        } else
-          cs.items.push({
-            id: uid(),
-            title: t,
-            amount: a,
-            note: n,
-            date: dt,
-            paid: false,
-          });
-        dI.close();
-        save();
-      };
-      $("iDel").onclick = () => {
-        if (confirm("این قسط حذف شود؟")) {
-          cs.items = cs.items.filter((x) => x !== ei);
-          dI.close();
-          save();
-        }
-      };
+let cs=null,ei=null;
+function editItem(sid,iid){
+  cs=S.find(x=>x.id==sid);ei=iid?cs.items.find(x=>x.id==iid):null;
+  $('dIT').textContent=(ei?'ویرایش قسط':'قسط جدید')+' — '+cs.name;
+  $('iN').value=ei?ei.title:'';$('iA').value=ei?ei.amount:'';$('iD').value=ei?ei.note:'';$('iDt').value=ei?ei.date||'':'';
+  $('iDel').style.display=ei?'':'none';dI.showModal();
+}
+$('iOK').onclick=()=>{
+  const t=$('iN').value.trim();if(!t)return;
+  const a=+$('iA').value||0,n=$('iD').value.trim(),dt=$('iDt').value;
+  if(ei){ei.title=t;ei.amount=a;ei.note=n;ei.date=dt}else cs.items.push({id:uid(),title:t,amount:a,note:n,date:dt,paid:false});
+  dI.close();save();
+};
+$('iDel').onclick=()=>{if(confirm('این قسط حذف شود؟')){cs.items=cs.items.filter(x=>x!==ei);dI.close();save()}};
 
-      function exp() {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(
-          new Blob([JSON.stringify(S)], { type: "application/json" }),
-        );
-        a.download = "installments-backup.json";
-        a.click();
-      }
-      $("imp").onchange = (e) => {
-        const r = new FileReader();
-        r.onload = () => {
-          try {
-            const d = JSON.parse(r.result);
-            if (
-              Array.isArray(d) &&
-              confirm("اطلاعات فعلی با فایل جایگزین شود؟")
-            ) {
-              S = d;
-              save();
-            }
-          } catch (x) {
-            alert("فایل معتبر نیست");
-          }
-        };
-        r.readAsText(e.target.files[0]);
-      };
-      render();
-      if ("serviceWorker" in navigator)
-        navigator.serviceWorker.register("sw.js").catch(() => {});
-    </script>
-  </body>
+const lb=()=>{let t=null;try{t=localStorage.getItem('installments-lastbackup')}catch(e){}$('lb').textContent=t?'آخرین پشتیبان: '+fd(t):'هنوز پشتیبان نگرفته‌ای'};
+function exp(){
+  try{localStorage.setItem('installments-lastbackup',today())}catch(e){}lb();
+  const p=NP();
+  if(p&&p.Filesystem&&p.Share){p.Filesystem.writeFile({path:'installments-backup.json',data:JSON.stringify(S),directory:'CACHE',encoding:'utf8'}).then(r=>p.Share.share({title:'Backup',url:r.uri})).catch(()=>alert('پشتیبان‌گیری ناموفق بود'));return}
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));
+  a.download='installments-backup.json';a.click();
+}
+$('imp').onchange=e=>{
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)&&confirm('اطلاعات فعلی با فایل جایگزین شود؟')){S=d;save()}}catch(x){alert('فایل معتبر نیست')}};
+  r.readAsText(e.target.files[0]);
+};
+render();
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+(async()=>{const p=NP();if(!p||!p.Preferences)return;try{const r=await p.Preferences.get({key:K});if(r.value){S=JSON.parse(r.value);render()}else if(S.length)p.Preferences.set({key:K,value:JSON.stringify(S)})}catch(e){}})();
+if(!NP()&&'serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
 </html>

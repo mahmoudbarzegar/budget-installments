@@ -1,69 +1,71 @@
-# budget-installments
+# installments-pwa
 
-اپ مدیریت اقساط، به‌صورت PWA با پشتیبانی کامل فارسی (RTL). بدون سرور، بدون build و با ذخیره داده‌ها فقط روی گوشی خودت.
+**English** | [فارسی](README.fa.md)
 
-## امکانات
+An offline-first installment tracker PWA with full Persian (RTL) support. No backend, no build step. Your data stays on your device.
 
-- تعریف چند **منبع** (کیف پول، وام، مخارج و...) هرکدام با نام و بودجه
-- ثبت **اقساط** برای هر منبع با عنوان، مبلغ، توضیحات و **تاریخ سررسید** (نمایش شمسی)
-- نمایش لحظه‌ای مجموع اقساط، مانده بودجه و نوار پیشرفت برای هر منبع
-- دو صفحه: لیست منابع ← اقساط هر منبع
-- جستجو در اقساط و مرتب‌سازی (ترتیب ثبت، نزدیک‌ترین سررسید، بیشترین مبلغ)
-- علامت‌گذاری قسط پرداخت‌شده؛ اقساط عقب‌افتاده قرمز نمایش داده می‌شوند
-- کار کردن بدون اینترنت پس از اولین بار باز شدن
-- پشتیبان‌گیری و بازیابی با فایل JSON
-- حالت تیره (سازگار با تنظیمات گوشی)
+## Features
 
-## ساختار پروژه
+- Define multiple **sources** (wallet, loan, expenses, etc.), each with a name and a budget
+- Add **installments** to each source with a title, amount, notes, and an optional **due date** (displayed in the Jalali calendar)
+- Live totals per source: sum of installments, remaining budget, and a progress bar
+- Two-screen layout: sources list, then the installments of a selected source
+- Search installments and sort by creation order, nearest due date, or largest amount
+- Mark installments as paid; overdue ones are highlighted in red
+- Works offline after the first load
+- Backup and restore via a JSON file
+- Dark mode (follows the phone's system setting)
+
+## Project structure
 
 ```
-index.html     کل برنامه (HTML + CSS + JS)
-manifest.json  تنظیمات نصب PWA
-sw.js          Service Worker برای کار آفلاین
-icon.svg       آیکون برنامه
+index.html     The entire app (HTML + CSS + JS)
+manifest.json  PWA install metadata
+sw.js          Service worker for offline support
+icon.svg       App icon
 ```
 
-وابستگی خارجی ندارد و نیازی به build نیست.
+There are no external dependencies and no build step.
 
-## نصب روی گوشی
+## Install on your phone
 
-PWA برای نصب به **HTTPS** نیاز دارد. ساده‌ترین راه، GitHub Pages است:
+A PWA needs **HTTPS** to be installable. The simplest option is GitHub Pages:
 
-1. چهار فایل بالا را در ریشه ریپو قرار بده.
-2. از **Settings ← Pages** برنچ `main` و پوشه `/ (root)` را انتخاب کن.
-3. بعد از یکی دو دقیقه، برنامه روی `https://USERNAME.github.io/budget-installments/` در دسترس است.
+1. Put the four files above in the root of the repo.
+2. Go to **Settings > Pages**, choose the `main` branch and the `/ (root)` folder.
+3. After a minute or two the app is live at `https://USERNAME.github.io/installments-pwa/`.
 
-(جایگزین: پوشه پروژه را در `app.netlify.com/drop` بکش و رها کن.)
+(Alternative: drag the project folder onto `app.netlify.com/drop`.)
 
-سپس روی گوشی:
+Then, on your phone:
 
-- **اندروید (Chrome):** منوی ⋮ ← _Install app_ یا _Add to Home screen_
-- **آیفون (Safari):** دکمه Share ← _Add to Home Screen_
+- **Android (Chrome):** menu (⋮) > *Install app* or *Add to Home screen*
+- **iPhone (Safari):** Share button > *Add to Home Screen*
 
-## اجرا روی کامپیوتر (برای توسعه)
+## Run locally
 
-Service Worker روی `file://` کار نمی‌کند، پس یک سرور محلی بالا بیاور:
+Service workers don't work over `file://`, so start a local server:
 
 ```bash
 python3 -m http.server 8000
-# سپس باز کن: http://localhost:8000
+# then open http://localhost:8000
 ```
 
-`localhost` به‌عنوان آدرس امن شناخته می‌شود و نصب PWA روی آن هم کار می‌کند.
+`localhost` is treated as a secure origin, so PWA install works there too.
 
-## داده‌ها و پشتیبان‌گیری
+## Data and backups
 
-- همه داده‌ها فقط در `localStorage` مرورگر همان گوشی ذخیره می‌شوند و به هیچ سروری ارسال نمی‌شوند.
-- پاک کردن اطلاعات سایت (Clear site data) یا حذف مرورگر، داده‌ها را پاک می‌کند. هر از گاهی از دکمه **پشتیبان‌گیری** (پایین صفحه اول) فایل JSON بگیر.
-- برای انتقال به گوشی دیگر: پشتیبان بگیر، در گوشی جدید برنامه را نصب کن و از **بازیابی** استفاده کن.
+- All data is stored in the browser's `localStorage` on that device and is never sent to any server.
+- Clearing site data or uninstalling the browser deletes it. Use the **Backup** button (bottom of the home screen) from time to time to export a JSON file.
+- To move to another phone: export a backup, install the app on the new phone, and use **Restore**.
 
-## به‌روزرسانی
+## Updating
 
-بعد از تغییر در فایل‌ها، مقدار نسخه کش در `sw.js` را بالا ببر (مثلا `installments-v3` به `installments-v4`)، فایل‌ها را روی ریپو commit کن و برنامه را یک بار ببند و دوباره باز کن.
+After changing any file, bump the cache version in `sw.js` (for example `installments-v1` to `installments-v2`), commit, and push. Then close and reopen the app once to pick up the new version.
 
-## ساخت APK (اختیاری)
+## Building an APK (optional)
 
-اگر نسخه اندروید بومی خواستی، همین پروژه را می‌شود با [Capacitor](https://capacitorjs.com) بسته‌بندی کرد:
+If you want a native Android build, you can wrap this project with [Capacitor](https://capacitorjs.com):
 
 ```bash
 npm init -y
